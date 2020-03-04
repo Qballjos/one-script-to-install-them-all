@@ -9,13 +9,13 @@ Pull the installer to your server and create a folder :
 
 
 Edit the `.env` file with the correct info  get your plex claim code at https://www.plex.tv/claim/  
-You can change the subdomain name's bij changing the variable `traefik.frontend.rule=Host:` in the `docker-compose.yml`  
+You can change the subdomain name's by changing the variable `traefik.frontend.rule=Host:` in the `docker-compose.yml`  
 If you want to run this installer on Ubuntu change the docker adres in docker-compose.yml.
 
 Make the deploy.sh executable with: `chmod +x ./deploy.sh`   
 Now run it with: `./deplot.sh`
 
-These apps are included:
+You can edit the docker-compose.yml to add or remove apps but these apps are included:
 
 | service | purpose | url / ports |
 | ------- | ------- | :---------: |
