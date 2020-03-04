@@ -4,7 +4,7 @@ This image is made for Ubuntu but can be modified to work on Debian.
 
 This wil install Docker and linux Cockpit on your system, al other apps are docker's.
 
-Pull the installer to your server and create a folder :  `sudo git clone https://gitlab.com/info178/docker_mediaserver.git /media-docker/ && cd /media-docker/`
+Pull the installer to your server and create a folder :  `https://github.com/Qballjos/one-script-to-install-them-all.git /media-docker/ && cd /media-docker/`
 
 Edit the `.env` file with the correct info  get your plex claim code at https://www.plex.tv/claim/  
 You can change the subdomain name's bij changing the variable `traefik.frontend.rule=Host:` in the `docker-compose.yml`  
