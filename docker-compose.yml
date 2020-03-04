@@ -265,6 +265,29 @@ services:
       - 80
       - 443
     restart: always
+  Portainer:
+    image: portainer/portainer:latest
+    container_name: portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+      - ${BASE_DIR}/portainer/data:/data
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+    labels:
+      - traefik.backend=portainer
+      - traefik.frontend.rule=Host:portainer.${DOMAIN}
+      - traefik.docker.network=proxied
+      - traefik.port=9000
+    networks:
+      - internal
+      - proxied
+    expose:
+      - 9000:9000
+      - 8000:8000
+    restart: always
 
   # Tautulli
   tautulli:
