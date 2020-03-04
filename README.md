@@ -31,4 +31,6 @@ These apps are included:
 | Ombi | plex requests | https://aanvraag.${DOMAIN} |
 | Tautulli | plex statistics | https://monitor.${DOMAIN} |
 | Cockpit | server statistics & management | :9090 |
+| Portainer | Docker container installation & management | https://portainer.${DOMAIN} |
+| Watchtower | Docker container updater | none |
 
