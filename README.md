@@ -31,3 +31,5 @@ You can edit the docker-compose.yml to add or remove apps but these apps are inc
 | Watchtower | Docker container updater | none |
 | Letsencrypt | Docker container updater | none |
 
+I Still need to generate the subdomain configs for the letsencrypt container
+
