@@ -4,11 +4,11 @@ services:
   ## Media Interfaces
   # Plex Server
   plex:
-    image: linuxserver/plex:latest
-    container_name: plex
-    hostname: plex
+    image: linuxserver/jellyfin
+    container_name: jellyfin
+    hostname: jellyfin
     volumes:
-      - ${BASE_DIR}/plex/config:/config
+      - ${BASE_DIR}/jellyfin/config:/config
       - ${MEDIA_DIR}/TV:/data/tv
       - ${MEDIA_DIR}/Movies:/data/movies
       - ${MEDIA_DIR}/Music:/data/music
@@ -16,57 +16,9 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TIMEZONE}
-      - PLEX_CLAIM=${CLAIM}
-    labels:
-      - traefik.backend=plex
-      - traefik.frontend.rule=Host:plex.${DOMAIN}
-      - traefik.docker.network=proxied
-      - traefik.port=32400
-    networks:
-      - internal
-      - proxied
     ports:
-      - 32400:32400
-      - 32400:32400/udp
-      - 32469:32469
-      - 32469:32469/udp
-      - 3005:3005
-      - 8324:8324
-      - 1900:1900/udp
-      - 5353:5353/udp
-      - 32410:32410/udp
-      - 32412:32412/udp
-      - 32413:32413/udp
-      - 32414:32414/udp
-    restart: always
-  
-  # Ubooquity
-  ubooquity:
-    image: linuxserver/ubooquity:latest
-    container_name: ubooquity
-    volumes:
-      - ${BASE_DIR}/ubooquity/config:/config
-      - ${MEDIA_DIR}/Books:/books
-      - ${MEDIA_DIR}/Comics:/comics
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TIMEZONE}
-    labels:
-      - traefik.backend=ubooquity
-      - traefik.docker.network=proxied
-      - traefik.frontend.rule=Host:bibliotheek.${DOMAIN}
-      - traefik.port=2202
-      - traefik.default.protocol=http
-      - traefik.admin.frontend.rule=Host:admin-bibliotheek.${DOMAIN}
-      - traefik.admin.port=2203
-      - traefil.admin.protocol=http
-    networks:
-      - internal
-      - proxied
-    expose:
-      - 2202
-      - 2203
+      - 8096:8096
+      - 8920:8920
     restart: always
 
   ## /Media Interfaces
@@ -83,42 +35,35 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TIMEZONE}
-    labels:
-      - traefik.backend=jackett
-      - traefik.frontend.rule=Host:index.${DOMAIN}
-      - traefik.docker.network=proxied
-      - traefik.port=9117
-    networks:
-      - internal
-      - proxied
-    expose:
-      - 9117
+    ports:
+      - 9117:9117
     restart: always
-  transmission:
-    image: linuxserver/transmission:latest
-    container_name: transmission
+  qbittorrent:
+    image: binhex/arch-qbittorrentvpn:latest
+    container_name: qbittorrent
     volumes:
-      - ${BASE_DIR}/transmission:/data
-      - ${DOWNLOAD_DIR}/complete:/data/completed
-      - ${DOWNLOAD_DIR}/incomplete:/data/incomplete
+      - ${BASE_DIR}/qbittorrent:/data
+      - ${BASE_DIR}/qbittorrent:/config
       - /etc/localtime:/etc/localtime:ro
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=${TIMEZONE}
-      - TRANSMISSION_RPC_HOST_WHITELIST=*.${DOMAIN}
-    networks:
-      - proxied
-    expose:
-      - 9091
-      - 8080
+      - VPN_ENABLED=${VPN_ENABLED}
+      - VPN_USER=${VPN_USER}
+      - VPN_PASS=${VPN_PASS}
+      - VPN_PROV=custom
+      - ENABLE_PRIVOXY=${ENABLE_PRIVOXY}
+      - LAN_NETWORK=${LAN_NETWORK}
+      - NAME_SERVERS=${NAME_SERVERS}
+      - DEBUG=false
+      - WEBUI_PORT=8080
+    ports:
+      - 6881:6881
+      - 8080:8080
+      - 8118:8118
+      - 6881:6881/udp
     restart: always
-    labels:
-      - traefik.backend=transmission
-      - traefik.frontend.rule=Host:download.${DOMAIN}
-      - traefik.docker.network=proxied
-      - traefik.port=9091
-    
 
   ## / Downloaders
 
@@ -135,16 +80,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TIMEZONE}
-    labels:
-      - traefik.backend=sonarr
-      - traefik.frontend.rule=Host:tv.${DOMAIN}
-      - traefik.docker.network=proxied
-      - traefik.port=8989
-    networks:
-      - internal
-      - proxied
-    expose:
-      - 8989
+    ports:
+      - 8989:8989
     restart: always
 
   # Radarr
@@ -159,16 +96,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TIMEZONE}
-    labels:
-      - traefik.backend=radarr
-      - traefik.frontend.rule=Host:film.${DOMAIN}
-      - traefik.docker.network=proxied
-      - traefik.port=7878
-    networks:
-      - internal
-      - proxied
-    expose:
-      - 7878
+    ports:
+      - 7878:7878
     restart: always
 
   # Lidarr
@@ -183,70 +112,15 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TIMEZONE}
-    labels:
-      - traefik.backend=lidarr
-      - traefik.frontend.rule=Host:muziek.${DOMAIN}
-      - traefik.docker.network=proxied
-      - traefik.port=8686
-    networks:
-      - proxied
-    expose:
-      - 8686
-    restart: always
-
-  # LazyLibrarian
-  lazylibrarian:
-    image: linuxserver/lazylibrarian:latest
-    container_name: lazylibrarian
-    volumes:
-      - ${BASE_DIR}/lazylibrarian/config:/config
-      - ${MEDIA_DIR}/Books:/books
-      - ${DOWNLOAD_DIR}:/downloads
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TIMEZONE}
-    labels:
-      - traefik.backend=lazylibrarian
-      - traefik.frontend.rule=Host:boek.${DOMAIN}
-      - traefik.docker.network=proxied
-      - traefik.port=5299
-    networks:
-      - internal
-      - proxied
-    expose:
-      - 5299
-    restart: always
-
-  # Mylar
-  mylar:
-    image: linuxserver/mylar:latest
-    container_name: mylar
-    volumes:
-      - ${BASE_DIR}/mylar/config:/config
-      - ${MEDIA_DIR}/Comics:/comics
-      - ${DOWNLOAD_DIR}:/downloads
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TIMEZONE}
-    labels:
-      - traefik.backend=mylar
-      - traefik.frontend.rule=Host:strip.${DOMAIN}
-      - traefik.docker.network=proxied
-      - traefik.port=8090
-    networks:
-      - internal
-      - proxied
-    expose:
-      - 8090
+    ports:
+      - 8686:8686
     restart: always
   ## /Searchers
 
   ## Helper Apps
   # Organizr
   Organizr:
-    image: handsomgenious/organizr-v2:latest
+    image: linuxserver/organizr:latest
     container_name: organizr
     volumes:
       - ${BASE_DIR}/organizr/config:/config
@@ -254,16 +128,9 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TIMEZONE}
-    labels:
-      - traefik.backend=organizr
-      - traefik.frontend.rule=Host:controle.${DOMAIN}
-      - traefik.docker.network=proxied
-    networks:
-      - internal
-      - proxied
-    expose:
-      - 80
-      - 443
+    ports:
+      - 180:80
+      - 1443:443
     restart: always
 
   # Portainer  
@@ -278,137 +145,44 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TIMEZONE}
-    labels:
-      - traefik.backend=portainer
-      - traefik.frontend.rule=Host:portainer.${DOMAIN}
-      - traefik.docker.network=proxied
-      - traefik.port=9000
-    networks:
-      - internal
-      - proxied
-    expose:
+    ports:
       - 9000:9000
       - 8000:8000
     restart: always
 
-  # Tautulli
-  tautulli:
-    image: tautulli/tautulli:latest
-    container_name: tautulli
-    volumes:
-      - ${BASE_DIR}/tautulli/config:/config
-      - ${BASE_DIR}/plex/config/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs:ro
+  # Let's encrypt
+  letsencrypt:
+    image: linuxserver/letsencrypt
+    container_name: letsencrypt
+    cap_add:
+      - NET_ADMIN
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=${TIMEZONE}
-    labels:
-      - traefik.backend=tautulli
-      - traefik.frontend.rule=Host:monitor.${DOMAIN}
-      - traefik.docker.network=proxied
-      - traefik.port=8181
-    networks:
-      - proxied
-      - internal
-    expose:
-      - 8181
-    depends_on:
-      - plex    
-    restart: always
-
-  # Ombi
-  ombi:
-    image: linuxserver/ombi:latest
-    container_name: ombi
+      - URL=${DOMAIN}
+      - SUBDOMAINS=${SUBDOMAINS}
+      - VALIDATION=$(VALIDATION)
+      - EMAIL=${EMAIL}
+      - DHLEVEL=2048 #optional
+      - ONLY_SUBDOMAINS=${ONLY_SUBDOMAINS}
+      - EXTRA_DOMAINS=${EXTRA_DOMAINS} #optional
+      - STAGING=false #optional
     volumes:
-      - ${BASE_DIR}/ombi/config:/config
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TIMEZONE}
-    labels:
-      - traefik.backend=ombi
-      - traefik.frontend.rule=Host:aanvragen.${DOMAIN}
-      - traefik.docker.network=proxied
-      - traefik.port=3579
-    networks:
-      - proxied
-      - internal
-    expose:
-      - 3579
-    depends_on:
-      - plex
-    restart: always
-  ## /Helper Apps
-
-  # Ghost Blog
-  ghost:
-    image: ghost:alpine
-    container_name: ghost
-    volumes:
-      - ${BASE_DIR}/ghost/blog:/var/lib/ghost/content
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TIMEZONE}
-      - NODE_ENV=production
-      - url=https://blog.${DOMAIN}
-    labels:
-      - traefik.backend=ghost
-      - traefik.frontend.rule=Host:blog.${DOMAIN}
-      - traefik.docker.network=proxied
-      - traefik.port=2368
-    networks:
-      - proxied
-      - internal
-    expose:
-      - 2368
-    restart: always
-
-  
-  ## Traefik Proxy
-  # Traefik
-  traefik:
-    image: traefik:latest
-    container_name: traefik
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${BASE_DIR}/traefik/traefik.toml:/traefik.toml
-      - ${BASE_DIR}/traefik/acme.json:/acme.json
-    labels:
-      - traefik.backend=traefik
-      - traefik.frontend.rule=Host:proxy.${DOMAIN}
-      - traefik.docker.network=proxied
-      - traefik.port=8080
-    networks:
-      - proxied
-      - internal
-      - web
+      - ${BASE_DIR}/letsencrypt/config:/config
     ports:
-      - 80:80
       - 443:443
-    expose:
-      - 8080
-    restart: always
-  ## /Traefik Proxy
+      - 80:80 #optional
+    restart: unless-stopped
+  ## /Helper Apps
 
   ## Watchtower Updater
   watchtower:
-    image: v2tec/watchtower:latest
+    image: containrrr/watchtower:latest
     container_name: watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command:
       - --cleanup --schedule "0 0 2 * * *"
-    networks:
-      - proxied
     restart: unless-stopped
   ## /Watchtower Updater
-
-# Networking config
-networks:
-  web:
-  internal:
-    external: false
-  proxied:
-    external: true

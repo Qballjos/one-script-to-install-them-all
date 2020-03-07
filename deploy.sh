@@ -109,50 +109,28 @@ then
 fi
 success "Ensured legacy Docker packages are gone."
 
-# apt-over-https
-info "Ensuring packages for apt-over-https are installed."
-apt_install "apt-transport-https" "ca-certificates" "curl" "software-properties-common"
-
 # docker packages & pre-configure
-info "Installing Docker GPG key."
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
-  apt-key add - &> /dev/null
-if [[ "$?" -ne "$SUCCESS" ]]
-then
-  err "Error downloading Docker GPG key."
-  exit 1
-fi
-success "Docker GPG key installed."
-
-info "Adding Docker-managed apt repository."
-sudo add-apt-repository \
-  "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" \
-  &> /dev/null
-if [[ "$?" -ne "$SUCCESS" ]]
-then
-  err "Error adding Docker repository."
-  exit 1
-fi
-success "Docker repository added."
-
 info "Installing Docker CE."
-apt_install "docker-ce"
+sudo curl -sSL https://get.docker.com | sh &> /dev/null
+if [[ "$?" -ne "$SUCCESS" ]]
+then
+  err "Error occurred installing legacy Docker ."
+  exit 1
+fi
+success "Docker is installed."
+
+# apt-over-https
+info "Ensuring packages for pip and docker-compose are installed."
+apt_install -y "libffi-dev" "libssl-dev" "python" "python-pip"
+sudo apt-get remove python-configparser
 
 info "Installing Docker Compose."
 info "Downloading Compose from GitHub."
-sudo curl -fsSL https://github.com/docker/compose/releases/download/"${compose_version}"/docker-compose-Linux-x86_64 \
-  -o /usr/local/bin/docker-compose \
+sudo pip install docker-compose
   &> /dev/null
 if [[ "$?" -ne "$SUCCESS" ]]
 then
   err "Error downloading Docker Compose."
-  exit 1
-fi
-sudo chmod +x /usr/local/bin/docker-compose > /dev/null
-if [[ "$?" -ne "$SUCCESS" ]]
-then
-  err "Error installing Docker Compose."
   exit 1
 fi
 success "Docker Compose installed."
@@ -178,59 +156,15 @@ then
 fi
 success "Cockpit-Docker installed."
 
-# traefik pre-configure
-info "Setting up Traefik configuration."
-sed -i "s/#EMAIL_ADDRESS#/${email_address}/g" traefik.toml
-if [[ "$?" -ne "$SUCCESS" ]]
-then
-  err "Traefik email replace failed."
-  exit 1
-fi
-sed -i "s/#DOMAIN#/${domain}/g" traefik.toml
-if [[ "$?" -ne "$SUCCESS" ]]
-then
-  err "Traefik domain replace failed."
-  exit 1
-fi
-sudo mkdir -p "${base_dir}"/traefik/ > /dev/null
-if [[ "$?" -ne "$SUCCESS" ]]
-then
-  err "Could not create Traefik directory."
-  exit 1
-fi
-sudo cp traefik.toml "${base_dir}"/traefik/traefik.toml > /dev/null
-if [[ "$?" -ne "$SUCCESS" ]]
-then
-  err "Could not copy Traefik config."
-  exit 1
-fi
-sudo touch "${base_dir}"/traefik/acme.json > /dev/null
-if [[ "$?" -ne "$SUCCESS" ]]
-then
-  err "Could not create acme.json file."
-  exit 1
-fi
-sudo chmod 600 "${base_dir}"/traefik/acme.json > /dev/null
-if [[ "$?" -ne "$SUCCESS" ]]
-then
-  err "Could not create acme.json file."
-  exit 1
-fi
-success "Traefik configuration in place."
+# container installation
 
-# docker environment set up
-info "Creating external proxied Docker network."
-sudo docker network create proxied &> /dev/null
-info "Creating external web Docker network."
-sudo docker network create web &> /dev/null
 info "Building the Docker containers."
 sudo docker-compose up --force-recreate -d
 if [[ "$?" -ne "$SUCCESS" ]]
 then
   err "Docker build failed."
   exit 1
-
-
+fi
 # All done!
 success "Successfully built media server Docker environment!"
 exit 0
