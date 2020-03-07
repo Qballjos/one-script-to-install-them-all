@@ -19,7 +19,7 @@ You can edit the docker-compose.yml to add or remove apps but these apps are inc
 
 | service | purpose | url / ports |
 | ------- | ------- | :---------: |
-| Jellyfin | movie / tv / music interface | https://media.${DOMAIN} <br> :8096 |
+| Jellyfin | movie / tv / music interface | https://media.${DOMAIN}  |
 | Organizr V2 | dashboard | https://controle.${DOMAIN} |
 | Qbittorrent VPN | torrent download | https://download.${DOMAIN} |
 | Jackett | torznab searcher | https://index.${DOMAIN} |
