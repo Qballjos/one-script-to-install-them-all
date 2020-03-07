@@ -1,16 +1,13 @@
 ### Docker Mediaserver installer
 
-This image is made for Ubuntu but can be modified to work on Debian.
+This image should work on debian and ubuntu based systems.
 
 This wil install Docker and linux Cockpit on your system, al other apps are docker's.
 
 Pull the installer to your server and create a folder :
 `sudo git clone https://github.com/Qballjos/one-script-to-install-them-all.git /media-docker/ && cd /media-docker/`
 
-
-Edit the `.env` file with the correct info  get your plex claim code at https://www.plex.tv/claim/  
-You can change the subdomain name's by changing the variable `traefik.frontend.rule=Host:` in the `docker-compose.yml`  
-If you want to run this installer on Ubuntu change the docker adres in docker-compose.yml.
+Edit the `.env` file with the correct info before running the script!
 
 Make the deploy.sh executable with: `chmod +x ./deploy.sh`   
 Now run it with: `./deplot.sh`

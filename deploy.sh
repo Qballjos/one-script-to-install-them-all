@@ -109,6 +109,10 @@ then
 fi
 success "Ensured legacy Docker packages are gone."
 
+# curl install
+info "Ensuring curl is installed."
+apt_install -y "curl"
+
 # docker packages & pre-configure
 info "Installing Docker CE."
 sudo curl -sSL https://get.docker.com | sh &> /dev/null
@@ -119,10 +123,10 @@ then
 fi
 success "Docker is installed."
 
-# apt-over-https
+# pip for docker-compose
 info "Ensuring packages for pip and docker-compose are installed."
 apt_install -y "libffi-dev" "libssl-dev" "python" "python-pip"
-sudo apt-get remove python-configparser
+apt_remove -y "python-configparser"
 
 info "Installing Docker Compose."
 info "Downloading Compose from GitHub."
