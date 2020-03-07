@@ -51,12 +51,21 @@ apt_install() {
 ROOT_UID=0
 username=$(get_env_var USER_NAME .env)
 password=$(get_env_var PASSWORD .env)
-email_address=$(get_env_var EMAIL_ADDRESS .env)
 timezone=$(get_env_var TIMEZONE .env)
-compose_version=$(get_env_var COMPOSE_VERSION .env)
 base_dir=$(get_env_var BASE_DIR .env)
-domain=$(get_env_var DOMAIN .env)
-CLAIM=$(get_env_var CLAIM .env)
+VPN_ENABLED=$(get_env_var VPN_ENABLED .env)
+VPN_USER=$(get_env_var VPN_USER .env)
+VPN_PASS=$(get_env_var VPN_PASS .env)
+ENABLE_PRIVOXY=$(get_env_var ENABLE_PRIVOXY .env)
+VPN_ENABLED=$(get_env_var VPN_ENABLED .env)
+LAN_NETWORK=$(get_env_var LAN_NETWORK .env)
+NAME_SERVERS=$(get_env_var NAME_SERVERS .env)
+DOMAIN=$(get_env_var DOMAIN .env)
+SUBDOMAINS=$(get_env_var SUBDOMAINS .env)
+VALIDATION=$(get_env_var VALIDATION .env)
+EMAIL=$(get_env_var EMAIL .env)
+ONLY_SUBDOMAINS=$(get_env_var ONLY_SUBDOMAINS .env)
+EXTRA_DOMAINS=$(get_env_var EXTRA_DOMAINS .env)
 
 ## EXECUTION
 # Must be root
