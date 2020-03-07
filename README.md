@@ -19,20 +19,15 @@ You can edit the docker-compose.yml to add or remove apps but these apps are inc
 
 | service | purpose | url / ports |
 | ------- | ------- | :---------: |
-| Plex | movie / tv / music interface | https://plex.${DOMAIN} <br> :32400 |
-| Ubooquity | book / comic interface | https://bibliotheek.${DOMAIN}/ubooquity <br> https://admin-bibliotheek.${DOMAIN}/ubooquity/admin |
-| Traefik | reverse proxy | https://proxy.${DOMAIN} <br> :80 <br> :443|
+| Jellyfin | movie / tv / music interface | https://plex.${DOMAIN} <br> :8096 |
 | Organizr V2 | dashboard | https://controle.${DOMAIN} |
-| Transmission | torrent download | https://download.${DOMAIN} |
+| Qbittorrent VPN | torrent download | https://download.${DOMAIN} |
 | Jackett | torznab searcher | https://index.${DOMAIN} |
 | Sonarr | tv management | https://tv.${DOMAIN} |
 | Radarr | movie management | https://film.${DOMAIN} |
 | Lidarr | music management | https://muziek.${DOMAIN} |
-| Lazylibrarian | book management | https://boek.${DOMAIN} |
-| Mylar | comic management | https://strip.${DOMAIN} |
-| Ombi | plex requests | https://aanvraag.${DOMAIN} |
-| Tautulli | plex statistics | https://monitor.${DOMAIN} |
 | Cockpit | server statistics & management | :9090 |
 | Portainer | Docker container installation & management | https://portainer.${DOMAIN} |
 | Watchtower | Docker container updater | none |
+| Letsencrypt | Docker container updater | none |
 
