@@ -162,7 +162,7 @@ services:
       - TZ=${TIMEZONE}
       - URL=${DOMAIN}
       - SUBDOMAINS=${SUBDOMAINS}
-      - VALIDATION=$(VALIDATION)
+      - VALIDATION=http
       - EMAIL=${EMAIL}
       - DHLEVEL=2048 #optional
       - ONLY_SUBDOMAINS=${ONLY_SUBDOMAINS}

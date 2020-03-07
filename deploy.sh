@@ -62,8 +62,6 @@ LAN_NETWORK=$(get_env_var LAN_NETWORK .env)
 NAME_SERVERS=$(get_env_var NAME_SERVERS .env)
 DOMAIN=$(get_env_var DOMAIN .env)
 SUBDOMAINS=$(get_env_var SUBDOMAINS .env)
-VALIDATION=$(get_env_var VALIDATION .env)
-EMAIL=$(get_env_var EMAIL .env)
 ONLY_SUBDOMAINS=$(get_env_var ONLY_SUBDOMAINS .env)
 EXTRA_DOMAINS=$(get_env_var EXTRA_DOMAINS .env)
 
@@ -135,11 +133,11 @@ success "Docker is installed."
 # pip for docker-compose
 info "Ensuring packages for pip and docker-compose are installed."
 apt_install -y "libffi-dev" "libssl-dev" "python" "python-pip"
-apt_remove -y "python-configparser"
+sudo apt-get remove -y "python-configparser"
 
 info "Installing Docker Compose."
 info "Downloading Compose from GitHub."
-sudo pip install docker-compose
+sudo pip -q install docker-compose
   &> /dev/null
 if [[ "$?" -ne "$SUCCESS" ]]
 then
