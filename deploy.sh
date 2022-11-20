@@ -157,16 +157,6 @@ then
 fi
 success "Cockpit set to auto-start."
 
-# cockpit-docker install
-info "Installing Cockpit-Docker."
-apt_install "cockpit-docker"
-if [[ "$?" -ne "$SUCCESS" ]]
-then
-  err "Cockpit docker install failed."
-  exit 1
-fi
-success "Cockpit-Docker installed."
-
 # container installation
 
 info "Building the Docker containers."
